@@ -1,5 +1,14 @@
 version: '3.8'
 
+networks:
+    aws_net:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.238.0/24
+                  gateway: 172.16.238.1
+
 services:
     nginx:
         image: nginx:1.21.1
@@ -8,8 +17,17 @@ services:
         volumes:
             - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
             - ./src:/var/www/
+        environment:
+            - AWS_DEFAULT_REGION=ap-northeast-1
+            - AWS_DEFAULT_OUTPUT=json
+            - AWS_ACCESS_KEY_ID=coachtech
+            - AWS_SECRET_ACCESS_KEY=coachtech_pass
+        extra_hosts:
+            - "localstack:172.16.238.1"
+            - "coachtech.localstack:172.16.238.1"
         depends_on:
             - php
+            - localstack
 
     php:
         build: ./docker/php
@@ -40,3 +58,30 @@ services:
             - mysql
         ports:
             - 8080:80
+
+    localstack:
+        image: localstack/localstack:latest
+        container_name: localstack
+        environment:
+            - SERVICES=s3
+            - DEFAULT_REGION=us-east-1
+        networks:
+            - aws_net
+        ports:
+            - "8888:8080"
+            - "4567-4578:4567-4578"
+
+# awscli
+    awscli:
+        image: xueshanf/awscli
+        environment:
+            - AWS_DEFAULT_REGION=ap-northeast-1
+            - AWS_DEFAULT_OUTPUT=json
+            - AWS_ACCESS_KEY_ID=coachtech
+            - AWS_SECRET_ACCESS_KEY=coachtech_pass
+        extra_hosts:
+            - "localstack:172.16.238.1"
+            - "coachtech.localstack:172.16.238.1"
+        depends_on:
+            - localstack
+        entrypoint: aws --endpoint-url=http://localstack:4572 s3 mb s3://coachtech/
