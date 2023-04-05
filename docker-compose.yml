@@ -85,3 +85,5 @@ services:
         depends_on:
             - localstack
         entrypoint: aws --endpoint-url=http://localstack:4572 s3 mb s3://coachtech/
+        networks:
+            - aws_net
