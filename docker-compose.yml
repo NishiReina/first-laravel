@@ -65,15 +65,28 @@ services:
         environment:
             - SERVICES=s3
             - DEFAULT_REGION=us-east-1
+            - EDGE_PORT=4566
         networks:
             - aws_net
         ports:
-            - "8888:8080"
-            - "4567-4578:4567-4578"
+        # 前の
+            # - "8888:8080"
+            # - "4567-4578:4567-4578"
+        # youtubeの
+            # - "4566:4566"
+            - "4566-4583:4566-4583"
+        volumes:
+            - "${TEMPDIR:-/tmp/localstack}:/tmp/localstack"
+            - "/var/run/docker.sock:/var/run/docker.sock"
 
 # awscli
     awscli:
-        image: xueshanf/awscli
+        # image: xueshanf/awscli
+        image: aws-s3/aws-cli
+        build:
+            context: ./
+            dockerfile: ./docker/aws-cli/Dockerfile
+        tty: true
         environment:
             - AWS_DEFAULT_REGION=ap-northeast-1
             - AWS_DEFAULT_OUTPUT=json
@@ -84,6 +97,6 @@ services:
             - "coachtech.localstack:172.16.238.1"
         depends_on:
             - localstack
-        entrypoint: aws --endpoint-url=http://localstack:4572 s3 mb s3://coachtech/
+        # entrypoint: aws --endpoint-url=http://localstack:4566 s3 mb s3://coachtech/
         networks:
             - aws_net
