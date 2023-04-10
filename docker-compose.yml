@@ -87,6 +87,8 @@ services:
             context: ./
             dockerfile: ./docker/aws-cli/Dockerfile
         tty: true
+        volumes:
+            - .:/root
         environment:
             - AWS_DEFAULT_REGION=ap-northeast-1
             - AWS_DEFAULT_OUTPUT=json
@@ -97,6 +99,7 @@ services:
             - "coachtech.localstack:172.16.238.1"
         depends_on:
             - localstack
+        # 下の記述をコメントアウトしないと、awscliが動かなくなる。すでにcoachtechが作成されてますとなる
         # entrypoint: aws --endpoint-url=http://localstack:4566 s3 mb s3://coachtech/
         networks:
             - aws_net
