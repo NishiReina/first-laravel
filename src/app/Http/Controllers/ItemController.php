@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ItemRequest;
@@ -56,5 +57,28 @@ class ItemController extends Controller
         }
 
         return redirect()->route('item.detail',['item' => $item->id]);
+    }
+
+    public function photo(){
+
+        $files = Storage::disk('s3')->files();
+
+        // ファイルリスト生成
+        $list = [];
+        foreach ($files as $file) {
+            $date = Storage::disk('s3')->lastModified($file);
+            $list[$date] = [
+                'name' => $file,
+                'date' => date("Y-m-d H:i:s", $date),
+                'type' => pathinfo($file, PATHINFO_EXTENSION),
+                'size' =>  Storage::disk('s3')->size($file),
+            ];
+        }
+        // 日付降順にソート
+        krsort($list);
+
+        // 画面表示
+        return $list;
+        return view('photo')->with(['list' => $list]);
     }
 }
