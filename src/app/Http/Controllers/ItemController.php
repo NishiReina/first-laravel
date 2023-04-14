@@ -61,3 +61,4 @@ class ItemController extends Controller
 
         return redirect()->route('item.detail',['item' => $item->id]);
     }
+}
