@@ -6,8 +6,8 @@ networks:
         ipam:
             driver: default
             config:
-                - subnet: 172.16.238.0/24
-                  gateway: 172.16.238.1
+                - subnet: 192.168.11.13/24
+                  gateway: 192.168.11.13
 
 services:
     nginx:
@@ -23,8 +23,10 @@ services:
             - AWS_ACCESS_KEY_ID=coachtech
             - AWS_SECRET_ACCESS_KEY=coachtech_pass
         extra_hosts:
-            - "localstack:172.16.238.1"
-            - "coachtech.localstack:172.16.238.1"
+            - "localstack:192.168.11.13"
+            - "coachtech.localstack:192.168.11.13"
+            # - "localstack:host.docker.internal"
+            # - "coachtech.localstack:host.docker.internal"
         depends_on:
             - php
             - localstack
@@ -33,6 +35,9 @@ services:
         build: ./docker/php
         volumes:
             - ./src:/var/www/
+        extra_hosts:
+            - "localstack:192.168.11.13"
+            - "coachtech.localstack:192.168.11.13"
 
     mysql:
         image: mysql:8.0.26
@@ -63,9 +68,15 @@ services:
         image: localstack/localstack:latest
         container_name: localstack
         environment:
+            - HOSTNAME_EXTERNAL=localstack
             - SERVICES=s3
             - DEFAULT_REGION=us-east-1
             - EDGE_PORT=4566
+            - S3_ENDPOINT=http://localstack:4566
+            - AWS_DEFAULT_REGION=ap-northeast-1
+            - AWS_DEFAULT_OUTPUT=json
+            - AWS_ACCESS_KEY_ID=coachtech
+            - AWS_SECRET_ACCESS_KEY=coachtech_pass
         networks:
             - aws_net
         ports:
@@ -74,32 +85,32 @@ services:
             # - "4567-4578:4567-4578"
         # youtubeの
             # - "4566:4566"
-            - "4566-4583:4566-4583"
+            - "4566:4566"
         volumes:
             - "${TEMPDIR:-/tmp/localstack}:/tmp/localstack"
             - "/var/run/docker.sock:/var/run/docker.sock"
 
 # awscli
-    awscli:
-        # image: xueshanf/awscli
-        image: aws-s3/aws-cli
-        build:
-            context: ./
-            dockerfile: ./docker/aws-cli/Dockerfile
-        tty: true
-        volumes:
-            - .:/root
-        environment:
-            - AWS_DEFAULT_REGION=ap-northeast-1
-            - AWS_DEFAULT_OUTPUT=json
-            - AWS_ACCESS_KEY_ID=coachtech
-            - AWS_SECRET_ACCESS_KEY=coachtech_pass
-        extra_hosts:
-            - "localstack:172.16.238.1"
-            - "coachtech.localstack:172.16.238.1"
-        depends_on:
-            - localstack
-        # 下の記述をコメントアウトしないと、awscliが動かなくなる。すでにcoachtechが作成されてますとなる
-        # entrypoint: aws --endpoint-url=http://localstack:4566 s3 mb s3://coachtech/
-        networks:
-            - aws_net
+    # awscli:
+    #     # image: xueshanf/awscli
+    #     image: aws-s3/aws-cli
+    #     build:
+    #         context: ./
+    #         dockerfile: ./docker/aws-cli/Dockerfile
+    #     tty: true
+    #     volumes:
+    #         - .:/root
+    #     environment:
+    #         - AWS_DEFAULT_REGION=ap-northeast-1
+    #         - AWS_DEFAULT_OUTPUT=json
+    #         - AWS_ACCESS_KEY_ID=coachtech
+    #         - AWS_SECRET_ACCESS_KEY=coachtech_pass
+    #     extra_hosts:
+    #         - "localstack:172.16.238.1"
+    #         - "coachtech.localstack:172.16.238.1"
+    #     depends_on:
+    #         - localstack
+    #     # 下の記述をコメントアウトしないと、awscliが動かなくなる。すでにcoachtechが作成されてますとなる
+    #     # entrypoint: aws --endpoint-url=http://localstack:4566 s3 mb s3://coachtech/
+    #     networks:
+    #         - aws_net
