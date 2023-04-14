@@ -25,8 +25,6 @@ services:
         extra_hosts:
             - "localstack:192.168.11.13"
             - "coachtech.localstack:192.168.11.13"
-            # - "localstack:host.docker.internal"
-            # - "coachtech.localstack:host.docker.internal"
         depends_on:
             - php
             - localstack
@@ -80,37 +78,7 @@ services:
         networks:
             - aws_net
         ports:
-        # 前の
-            # - "8888:8080"
-            # - "4567-4578:4567-4578"
-        # youtubeの
-            # - "4566:4566"
             - "4566:4566"
         volumes:
             - "${TEMPDIR:-/tmp/localstack}:/tmp/localstack"
             - "/var/run/docker.sock:/var/run/docker.sock"
-
-# awscli
-    # awscli:
-    #     # image: xueshanf/awscli
-    #     image: aws-s3/aws-cli
-    #     build:
-    #         context: ./
-    #         dockerfile: ./docker/aws-cli/Dockerfile
-    #     tty: true
-    #     volumes:
-    #         - .:/root
-    #     environment:
-    #         - AWS_DEFAULT_REGION=ap-northeast-1
-    #         - AWS_DEFAULT_OUTPUT=json
-    #         - AWS_ACCESS_KEY_ID=coachtech
-    #         - AWS_SECRET_ACCESS_KEY=coachtech_pass
-    #     extra_hosts:
-    #         - "localstack:172.16.238.1"
-    #         - "coachtech.localstack:172.16.238.1"
-    #     depends_on:
-    #         - localstack
-    #     # 下の記述をコメントアウトしないと、awscliが動かなくなる。すでにcoachtechが作成されてますとなる
-    #     # entrypoint: aws --endpoint-url=http://localstack:4566 s3 mb s3://coachtech/
-    #     networks:
-    #         - aws_net

@@ -38,13 +38,16 @@ class ItemController extends Controller
     public function sellCreate(ItemRequest $request){
 
         $img = $request->file('img_url');
-        $img_url = $img->store('img','public');
+        $image_data = file_get_contents($img->getRealPath());
+
+        // s3へ保存
+        Storage::disk('s3')->put($img->getClientOriginalName(), $image_data, 'public');
 
         $item = Item::create([
             'name' => $request->name,
             'price' => $request->price,
             'description' => $request->description,
-            'img_url' => $img_url,
+            'img_url' => $img->getClientOriginalName(),
             'condition_id' => $request->condition_id,
             'user_id' => Auth::id(),
         ]);
@@ -78,7 +81,26 @@ class ItemController extends Controller
         krsort($list);
 
         // 画面表示
-        return $list;
+        // return $list;
         return view('photo')->with(['list' => $list]);
+    }
+
+    public function upload(Request $request)
+    {
+        // アップロードされたファイルを取得
+        $file = $request->file('photo');
+        // dd($file);
+        $image_data = file_get_contents($file->getRealPath());
+
+
+        // s3へ保存
+        Storage::disk('s3')->put($file->getClientOriginalName(), $image_data, 'public');
+
+        // 保存したいファイルのオリジナルネームを取得して、DBに保存する。get(名前)で取得できる。
+        // $file1 = Storage::disk('s3')->get($file->getClientOriginalName());
+        // dd($file1);
+
+        // 一覧画面へ
+        return redirect('/photo');
     }
 }

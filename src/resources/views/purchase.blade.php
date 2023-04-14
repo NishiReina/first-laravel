@@ -17,7 +17,7 @@
     <div class="buy__left">
         <div class="item">
             <div class="item__img">
-                <img src="{{ \Storage::url($item->img_url) }}" alt="">
+                <img src="{{env('AWS_S3_BASE_URL')}}/{{env('AWS_BUCKET')}}/{{$item->img_url}}" alt="商品画像">
             </div>
             <div class="item__info">
                 <h3 class="item__name">{{$item->name}}</h3>

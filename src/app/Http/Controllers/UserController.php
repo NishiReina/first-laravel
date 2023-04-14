@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile;
@@ -24,7 +25,9 @@ class UserController extends Controller
 
         $img = $request->file('img_url');
         if (isset($img)){
-            $img_url = $img->store('img','public');
+            $image_data = file_get_contents($img->getRealPath());
+            Storage::disk('s3')->put($img->getClientOriginalName(), $image_data, 'public');
+            $img_url = $img->getClientOriginalName();
         }else{
             $img_url = '';
         }
@@ -64,6 +67,7 @@ class UserController extends Controller
         }else {
             $items = Item::where('user_id', $user->id)->get();
         }
+
         return view('mypage', compact('user', 'items'));
     }
 }

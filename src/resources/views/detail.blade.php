@@ -16,11 +16,11 @@
     <div class="item">
         @if ($item->sold())
             <div class="item__img sold">
-                <img src="{{ \Storage::url($item->img_url) }}" alt="商品画像">
+            <img class="user__icon" src="{{env('AWS_S3_BASE_URL')}}/{{env('AWS_BUCKET')}}/{{$item->img_url}}">
             </div>
         @else
             <div class="item__img">
-                <img src="{{ \Storage::url($item->img_url) }}" alt="商品画像">
+                <img class="user__icon" src="{{env('AWS_S3_BASE_URL')}}/{{env('AWS_BUCKET')}}/{{$item->img_url}}">
             </div>
         @endif
         <div class="item__info">
@@ -78,7 +78,7 @@
                     <div class="comment">
                         <div class="comment__user">
                             <div class="user__img">
-                                <img src="{{ \Storage::url($comment->user->profile->img_url) }}" alt="">
+                                <img src="{{env('AWS_S3_BASE_URL')}}/{{env('AWS_BUCKET')}}/{{$comment->user->profile->img_url}}">
                             </div>
                             <p class="user__name">{{$comment->user->name}}</p>
                         </div>

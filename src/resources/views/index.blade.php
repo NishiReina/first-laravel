@@ -25,11 +25,11 @@
                 <a href="/item/{{$item->id}}">
                 @if ($item->sold())
                     <div class="item__img sold">
-                        <img src="{{ \Storage::url($item->img_url) }}" alt="商品画像">
+                        <img src="{{env('AWS_S3_BASE_URL')}}/{{env('AWS_BUCKET')}}/{{$item->img_url}}" alt="商品画像">
                     </div>
                 @else
                     <div class="item__img">
-                        <img src="{{ \Storage::url($item->img_url) }}" alt="商品画像">
+                        <img src="{{env('AWS_S3_BASE_URL')}}/{{env('AWS_BUCKET')}}/{{$item->img_url}}" alt="商品画像">
                     </div>
                 @endif
                     <p class="item__name">{{$item->name}}</p>
