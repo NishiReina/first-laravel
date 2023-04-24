@@ -12,6 +12,11 @@ docker-compose up -d
 docker-compose exec php bash
 ```
 
+- composerのインストール
+```
+compose install
+```
+
 - マイグレーションの実行
 ```
 php artisan migration:fresh
