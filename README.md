@@ -19,7 +19,7 @@ compose install
 
 - マイグレーションの実行
 ```
-php artisan migration:fresh
+php artisan migration
 ```
 
 - データの挿入
@@ -59,7 +59,7 @@ AWS Access Key ID、AWS Secret Access Keyは適当な値を設定して問題あ
 
 今回、バケット名はcoachtechとしています。
 ```
-aws --endpoint-url=http://localstack:4566 s3 cp test.txt s3://coachtech
+aws --endpoint-url=http://localstack:4566 s3 mb s3://coachtech/
 ```
 
 - 作成されたバケットを確認する
