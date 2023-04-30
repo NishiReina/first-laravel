@@ -19,7 +19,7 @@ composer install
 
 - マイグレーションの実行
 ```
-php artisan migration
+php artisan migrate
 ```
 
 - データの挿入
