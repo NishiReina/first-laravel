@@ -47,7 +47,7 @@
     <select name="condition_id" id="status" class="sell__select input">
         <option hidden>選択してください</option>
         @foreach ($conditions as $condition)
-        <option value="{{$condition->id}}">{{$condition->condition}}</option>
+            <option value="{{$condition->id}}">{{$condition->condition}}</option>
         @endforeach
     </select>
     <div class="form__error">

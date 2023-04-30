@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ItemRequest;
@@ -37,13 +38,16 @@ class ItemController extends Controller
     public function sellCreate(ItemRequest $request){
 
         $img = $request->file('img_url');
-        $img_url = $img->store('img','public');
+        $image_data = file_get_contents($img->getRealPath());
+
+        // s3へ保存
+        Storage::disk('s3')->put($img->getClientOriginalName(), $image_data, 'public');
 
         $item = Item::create([
             'name' => $request->name,
             'price' => $request->price,
             'description' => $request->description,
-            'img_url' => $img_url,
+            'img_url' => $img->getClientOriginalName(),
             'condition_id' => $request->condition_id,
             'user_id' => Auth::id(),
         ]);

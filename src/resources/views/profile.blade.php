@@ -18,7 +18,7 @@
     <div class="user">
         <div class="user__img">
             @if (isset($profile->img_url))
-                <img class="user__icon" src="{{ \Storage::url($profile->img_url) }}" alt="">
+                <img width="100px" class="user__icon" src="{{env('AWS_S3_BASE_URL')}}/{{env('AWS_BUCKET')}}/{{$profile->img_url}}">
             @else
                 <img id="myImage" class="user__icon" src="{{ asset('img/icon.png') }}" alt="">
             @endif
