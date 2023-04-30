@@ -14,7 +14,7 @@ docker-compose exec php bash
 
 - composerのインストール
 ```
-compose install
+composer install
 ```
 
 - マイグレーションの実行
@@ -65,4 +65,9 @@ aws --endpoint-url=http://localstack:4566 s3 mb s3://coachtech/
 - 作成されたバケットを確認する
 ```
 aws s3 ls --endpoint-url=http://localstack:4566 --profile localstack
+```
+
+- localstackのコンテナから出る
+```
+exit
 ```
