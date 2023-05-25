@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\Item;
 use App\Models\SoldItem;
 use App\Http\Requests\ProfileRequest;
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
 
 
 class UserController extends Controller
@@ -24,9 +26,29 @@ class UserController extends Controller
     public function updateProfile(ProfileRequest $request){
 
         $img = $request->file('img_url');
+        $s3Client = new S3Client([
+                'credentials' => [
+                    'key' => 'coachtech',
+                    'secret' => 'coachtech_pass',
+                ],
+                'region'   => 'ap-northeast-1',
+                'version'  => 'latest',
+                'endpoint' => 'http://localstack:4566',
+                'use_path_style_endpoint' => true,
+                'retries' => [
+                    'mode' => 'legacy',
+                    'max_attempts' => 10, 
+                ]
+        ]);
+
         if (isset($img)){
             $image_data = file_get_contents($img->getRealPath());
-            Storage::disk('s3')->put($img->getClientOriginalName(), $image_data, 'public');
+            // Storage::disk('s3')->put($img->getClientOriginalName(), $image_data, 'public');
+            $s3Client->putObject([
+                'Bucket' => 'coachtech',
+                'Key' => $img->getClientOriginalName(),
+                'Body' => $image_data
+            ]);
             $img_url = $img->getClientOriginalName();
         }else{
             $img_url = '';
